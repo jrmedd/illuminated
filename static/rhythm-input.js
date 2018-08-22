@@ -1,8 +1,10 @@
-var socket = io.connect(window.origin);
 $("#recording-controls").hide();
+
+var socket = io.connect(window.origin);
 var pattern = new tappy.Rhythm();
 var timeout;
-$('#tap-pad').on('mousedown touchstart', function(){
+
+$('#tap-pad').on('click', function(){
   clearTimeout(timeout);
   pattern.tap();
   console.log(pattern.length);
@@ -15,13 +17,14 @@ $('#tap-pad').on('mousedown touchstart', function(){
 });
 function display() {
   pattern.playback(function(i) {
+    $("#welcome").fadeOut();
     $("#recording-controls").hide();
     $("#main-wrapper").append('<div class="expanding-circle"></div>');
   },
   function(){
     $("#recording-controls").fadeIn();
     setTimeout(function(){ $(".expanding-circle").remove();}, 1000);
-  }, 1.2);
+  }, 1);
 }
 $('#play').on('click', function(e) {
   e.preventDefault();
@@ -30,10 +33,10 @@ $('#play').on('click', function(e) {
 $("#record").on('click', function(e){
   e.preventDefault();
   pattern = new tappy.Rhythm();
-  $("#recording-controls").fadeOut();
-  $("#tap-pad").show();
+  $("#recording-controls").fadeOut(function(){
+    $("#tap-pad").fadeIn();
+  });
 });
-
 $("#illuminate").on('click', function(e){
   e.preventDefault();
   socket.emit('illuminate', pattern)

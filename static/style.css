@@ -1,6 +1,28 @@
+@font-face {
+  src: url("Raleway-Regular.ttf");
+  font-family: 'Raleway';
+}
+
 body {
   margin: 0;
   padding: 0;
+  background: linear-gradient(-45deg, #38AA98, #72BAA6, #38AA98, #72BAA6);
+  background-size: 400% 400%;
+  font-family: 'Raleway';
+  color: #ffffff;
+  -webkit-animation: Gradient 30s ease infinite;
+  margin: 0;
+}
+@keyframes Gradient {
+	0% {
+		background-position: 0% 50%
+	}
+	50% {
+		background-position: 100% 50%
+	}
+	100% {
+		background-position: 0% 50%
+	}
 }
 
 #main-wrapper {
@@ -12,36 +34,96 @@ body {
   width: 100%;
 }
 
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-2%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0%);
+  }
+}
+
+#welcome {
+  position: fixed;
+  text-align: center;
+}
+
+#welcome h2 {
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-duration: 2s;
+  animation-delay: 0s;
+  animation-fill-mode: forwards;
+}
+#welcome h1 {
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-duration: 2s;
+  animation-delay: 1s;
+  animation-fill-mode: forwards;
+
+}
+#welcome h4 {
+  opacity: 0;
+  animation-name: fadeIn;
+  animation-duration: 1.5s;
+  animation-delay: 3s;
+  animation-fill-mode: forwards;
+
+}
+
 #tap-pad {
   height: 100vh;
   width: 100%;
+  z-index: 998;
 }
 
 #recording-controls {
-  position: fixed;
   display: flex;
-  justify-content: center;
+  width: 100%;
+  justify-content: space-evenly;
   align-items: center;
   text-align: center;
 }
 
+#recording-controls button {
+  font-family: 'Raleway';
+  font-size: 1em;
+  border-radius: 0;
+  -webkit-appearance: none;
+  padding: 1em;
+  background: #F0777E;
+  color: rgba(255,255,255,0.9);
+  border: none;
+  }
+
+
+
 @keyframes expandFadeout {
-  0%   {transform: scale(1); opacity: 1.;}
-  100% {transform: scale(10); opacity: 0;}
+  0%   {
+    transform: scale(1);
+    opacity: 1.;
+  }
+  50% {
+    opacity: .25
+  }
+  100% {
+    transform: scale(15);
+    opacity: 0;
+  }
 }
 .expanding-circle {
-  text-align: center;
+  position: fixed;
   height: 4vh;
   width: 4vh;
-  background-color: Blue;
+  background-color: #BB8293;
   border-radius: 50%;
   animation-name: expandFadeout;
   animation-duration: 1s;
   animation-fill-mode: forwards;
   z-index: 999;
-  position: fixed;
-  bottom: 50%;
-  right: 50%;
 }
 
 #tap {

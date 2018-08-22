@@ -1,5 +1,8 @@
 from flask import Flask, flash, url_for, render_template, request, redirect, make_response, Response, jsonify
 from flask_socketio import SocketIO
+from bson import ObjectId
+
+import datetime
 
 from pymongo import MongoClient
 
@@ -25,13 +28,14 @@ def index():
 
 @APP.route('/rhythms', methods=['GET'])
 def rhythms():
-    to_illuminate = list(RHYTHMS.find({'illuminated':False}, {'_id':0}))
+    to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
+    to_illuminate.update({'_id':str(to_illuminate.get('_id'))}) #after this, mark as illuminated!
     return jsonify(to_illuminate=to_illuminate)
 
 @SOCKETIO.on('illuminate')
 def handle_message(message):
     rhythm_to_store = message
-    rhythm_to_store.update({'illuminated': False})
+    rhythm_to_store.update({'illuminated':False, 'timestamp':datetime.datetime.now()})
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
 
