@@ -29,7 +29,13 @@ def index():
 @APP.route('/rhythms', methods=['GET'])
 def rhythms():
     to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
-    to_illuminate.update({'_id':str(to_illuminate.get('_id'))}) #after this, mark as illuminated!
+    if to_illuminate:
+        this_id = to_illuminate.get('_id')
+        to_illuminate.pop('_id')
+        to_illuminate.pop('illuminated')
+        RHYTHMS.update({'_id':this_id}, {'$set':{'illuminated':True}})
+    else:
+        to_illuminate = None
     return jsonify(to_illuminate=to_illuminate)
 
 @SOCKETIO.on('illuminate')
@@ -38,8 +44,6 @@ def handle_message(message):
     rhythm_to_store.update({'illuminated':False, 'timestamp':datetime.datetime.now()})
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
-
-
 
 if __name__ == '__main__':
     SOCKETIO.run(APP, host="0.0.0.0", debug=True)

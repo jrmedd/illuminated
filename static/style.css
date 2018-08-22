@@ -124,10 +124,17 @@ body {
   animation-duration: 1s;
   animation-fill-mode: forwards;
   z-index: 999;
+  border: 0;
 }
 
 #tap {
   animation-name: expandFadeout;
   animation-duration: .5s;
   animation-fill-mode: forwards;
+}
+
+#confirm-illumination {
+  display: flex;
+  display: none;
+  position: fixed;
 }

@@ -39,5 +39,8 @@ $("#record").on('click', function(e){
 });
 $("#illuminate").on('click', function(e){
   e.preventDefault();
+  $("#recording-controls").fadeOut(function(){
+    $("#confirm-illumination").fadeIn();
+  });
   socket.emit('illuminate', pattern)
 });
