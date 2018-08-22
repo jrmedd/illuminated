@@ -18,4 +18,4 @@ while True:
             flash = 'flash(%d)\r' % (beats[(beat+1)%len(beats)]*0.25)
             MB.write(flash.encode())
             time.sleep(beats[(beat+1)%len(beats)]*0.001)
-    time.sleep(5)
+    time.sleep(6)
