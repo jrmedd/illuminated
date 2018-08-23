@@ -16,6 +16,8 @@ CLIENT = MongoClient(MONGO_URL)
 DB = CLIENT['illuminated']
 RHYTHMS = DB['rhythms']
 
+ALLOWED_KEY = os.environ.get('API_KEY')
+
 APP = Flask(__name__)
 
 APP.secret_key = os.environ.get('SECRET_KEY')
@@ -28,6 +30,9 @@ def index():
 
 @APP.route('/rhythms', methods=['GET', 'POST'])
 def rhythms():
+    api_key = request.headers.get('X-Api-Key')
+    if api_key != ALLOWED_KEY:
+        return jsonify(valid_key=False)
     if request.method == "GET":
         to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
         if to_illuminate:
@@ -43,6 +48,10 @@ def rhythms():
         RHYTHMS.update({'_id':this_id}, {'$set':{'illuminated':illuminated_status}})
         return jsonify(illuminated_status=illuminated_status)
 
+
+@SOCKETIO.on('connect')
+def connect():
+    print("Connected")
 
 @SOCKETIO.on('illuminate')
 def handle_message(message):
