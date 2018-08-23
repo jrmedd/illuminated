@@ -46,7 +46,7 @@ body {
 }
 
 #welcome {
-  position: fixed;
+  position: absolute;
   text-align: center;
 }
 
@@ -115,7 +115,7 @@ body {
   }
 }
 .expanding-circle {
-  position: fixed;
+  position: absolute;
   height: 4vh;
   width: 4vh;
   background-color: #BB8293;
@@ -136,5 +136,5 @@ body {
 #confirm-illumination {
   display: flex;
   display: none;
-  position: fixed;
+  position: absolute;
 }
