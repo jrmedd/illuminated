@@ -26,17 +26,23 @@ SOCKETIO = SocketIO(APP)
 def index():
   return render_template('index.html')
 
-@APP.route('/rhythms', methods=['GET'])
+@APP.route('/rhythms', methods=['GET', 'POST'])
 def rhythms():
-    to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
-    if to_illuminate:
-        this_id = to_illuminate.get('_id')
-        to_illuminate.pop('_id')
-        to_illuminate.pop('illuminated')
-        RHYTHMS.update({'_id':this_id}, {'$set':{'illuminated':True}})
-    else:
-        to_illuminate = None
-    return jsonify(to_illuminate=to_illuminate)
+    if request.method == "GET":
+        to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
+        if to_illuminate:
+            this_id = to_illuminate.get('_id')
+            this_id_str = str(this_id)
+            to_illuminate.update({'_id':this_id_str})
+        else:
+            to_illuminate = None
+        return jsonify(to_illuminate=to_illuminate)
+    if request.method == "POST":
+        this_id = ObjectId(request.form.get('_id'))
+        illuminated_status = request.form.get('illuminated')
+        RHYTHMS.update({'_id':this_id}, {'$set':{'illuminated':illuminated_status}})
+        return jsonify(illuminated_status=illuminated_status)
+
 
 @SOCKETIO.on('illuminate')
 def handle_message(message):
