@@ -12,18 +12,15 @@ API_KEY = os.environ.get('API_KEY')
 
 API_HEADER = {'X-Api-Key':API_KEY}
 
-def flash(dur):
-    flash_command = ('flash(%d)\r' % (dur*0.5))
-    MB.write(flash_command.encode())
-    time.sleep(dur*0.001)
+def send_rhythm(beat_array):
+    to_transmit = 'send_rhythm(%a)\r' % (beat_array)
+    MB.write(to_transmit.encode())
+    print("Sent %s" % (MB.readline()))
 
 while True:
     oldest_rhythm = requests.get(RHYTHM_URL, headers=API_HEADER).json().get('to_illuminate')
     if oldest_rhythm:
         beats = oldest_rhythm.get('_taps')
-        flash(beats[0])
-        for beat in range(len(beats)):
-            print('beat')
-            flash (beats[(beat+1)%len(beats)])
+        send_rhythm(beats)
         update = requests.post(RHYTHM_URL, headers=API_HEADER ,data={'_id':oldest_rhythm.get('_id'), 'illuminated':True})
     time.sleep(6)
