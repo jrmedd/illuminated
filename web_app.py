@@ -70,7 +70,7 @@ def sms():
         resp = MessagingResponse()
         received = request.values.get('Body', 'Nothing')
         resp.message("You sent %s" % (received))
-        return jsonify(received=True)
+        return str(resp)
 
 if __name__ == '__main__':
     SOCKETIO.run(APP, host="0.0.0.0", debug=True)
