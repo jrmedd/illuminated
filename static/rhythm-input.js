@@ -41,6 +41,14 @@ $("#illuminate").on('click', function(e){
   e.preventDefault();
   $("#recording-controls").fadeOut(function(){
     $("#confirm-illumination").fadeIn();
+    $.ajax({
+      type: "POST",
+      url: 'illuminate',
+      contentType: "application/json; charset=utf-8",
+      data: JSON.stringify({'_taps':pattern._taps,'duration':pattern.duration}),
+      success: function() {
+      console.log("Illuminated");
+    }
+    });
   });
-  socket.emit('illuminate', pattern)
 });

@@ -15,10 +15,12 @@ API_HEADER = {'X-Api-Key':API_KEY}
 def send_rhythm(beat_array):
     to_transmit = 'send_rhythm(%a)\r' % (beat_array)
     MB.write(to_transmit.encode())
-    print("Sent %s" % (MB.readline()))
 
 while True:
-    oldest_rhythm = requests.get(RHYTHM_URL, headers=API_HEADER).json().get('to_illuminate')
+    try:
+        oldest_rhythm = requests.get(RHYTHM_URL, headers=API_HEADER).json().get('to_illuminate')
+    except:
+        print("Unable to access")
     if oldest_rhythm:
         beats = oldest_rhythm.get('_taps')
         send_rhythm(beats)

@@ -2,6 +2,11 @@ from flask import Flask, flash, url_for, render_template, request, redirect, mak
 from flask_socketio import SocketIO
 from bson import ObjectId
 
+import json
+
+from twilio.rest import Client
+from twilio.twiml.messaging_response import Body, Message, Redirect, MessagingResponse
+
 import datetime
 
 from pymongo import MongoClient
@@ -53,12 +58,19 @@ def rhythms():
 def connect():
     print("Connected")
 
-@SOCKETIO.on('illuminate')
-def handle_message(message):
-    rhythm_to_store = message
+@APP.route('/illuminate', methods=['POST'])
+def illuminate():
+    rhythm_to_store = request.get_json()
     rhythm_to_store.update({'illuminated':False, 'timestamp':datetime.datetime.now()})
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
+
+@APP.route('/sms', methods=['GET', 'POST'])
+def sms():
+    if request.method == "POST":
+        resp = MessagingResponse()
+        resp.message("You sent %s" % (request.values.get('Body')))
+        return jsonify(received=True)
 
 if __name__ == '__main__':
     SOCKETIO.run(APP, host="0.0.0.0", debug=True)
