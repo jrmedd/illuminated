@@ -64,11 +64,12 @@ def illuminate():
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
 
-@APP.route('/sms', methods=['GET', 'POST'])
+@APP.route('/sms', methods=['POST'])
 def sms():
     if request.method == "POST":
         resp = MessagingResponse()
-        resp.message("You sent %s" % (request.values.get('Body')))
+        received = request.values.get('Body', 'Nothing')
+        resp.message("You sent %s" % (received))
         return jsonify(received=True)
 
 if __name__ == '__main__':
