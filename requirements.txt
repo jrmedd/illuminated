@@ -6,3 +6,4 @@ eventlet==0.22.0
 gunicorn==19.6.0
 passlib==1.7.1
 twilio==6.16.3
+morse-talk==0.2
