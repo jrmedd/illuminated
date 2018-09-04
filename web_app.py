@@ -6,6 +6,8 @@ import json
 
 from twilio.twiml.messaging_response import Body, Message, Redirect, MessagingResponse
 
+import morse_talk as morse
+
 import datetime
 
 from pymongo import MongoClient
@@ -27,6 +29,24 @@ APP = Flask(__name__)
 APP.secret_key = os.environ.get('SECRET_KEY')
 
 SOCKETIO = SocketIO(APP)
+
+DOT_SPEED = 100
+DASH_SPEED = DOT_SPEED*3
+SPACE_SPEED = DOT_SPEED*7
+
+morse_parts = {'.':DOT_SPEED, '-':DASH_SPEED, '/':SPACE_SPEED}
+
+def morse_list(string_input):
+    morse_translate = morse.encode(string_input)
+    morse_translate = morse_translate.replace('?', '')
+    morse_translate = morse_translate.replace('      ',' / ')
+    morse_translate = morse_translate.split()
+    beats = []
+    for letter in morse_translate:
+        for part in letter:
+            beats.append(morse_parts.get(part))
+    pattern = {'_taps': beats, 'duration': sum(beats), 'morse':' '.join(morse_translate)}
+    return pattern
 
 @APP.route('/', methods=['GET'])
 def index():
@@ -58,8 +78,8 @@ def connect():
     print("Connected")
 
 @APP.route('/illuminate', methods=['POST'])
-def illuminate():
-    rhythm_to_store = request.get_json()
+def illuminate(rhythm_json=None):
+    rhythm_to_store = rhythm_json or request.get_json()
     rhythm_to_store.update({'illuminated':False, 'timestamp':datetime.datetime.now()})
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
@@ -68,8 +88,11 @@ def illuminate():
 def sms():
     if request.method == "POST":
         resp = MessagingResponse()
-        received = request.values.get('Body', 'Nothing')
-        resp.message("You sent %s" % (received))
+        received = request.values.get('Body', None)
+        if received:
+            morsified = morse_list(received)
+            illuminate(morsified)
+            resp.message("You sent %s" % (morsified.get('morse')))
         return str(resp)
 
 if __name__ == '__main__':
