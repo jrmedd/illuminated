@@ -4,8 +4,6 @@ from bson import ObjectId
 
 import json
 
-from twilio.twiml.messaging_response import Body, Message, Redirect, MessagingResponse
-
 import morse_talk as morse
 
 import datetime
@@ -30,38 +28,22 @@ APP.secret_key = os.environ.get('SECRET_KEY')
 
 SOCKETIO = SocketIO(APP)
 
-DOT_SPEED = 200
-DASH_SPEED = DOT_SPEED*3
-SPACE_SPEED = DOT_SPEED*7
-
-morse_parts = {'.':DOT_SPEED, '-':DASH_SPEED, '/':SPACE_SPEED}
-
-def morse_list(string_input):
-    morse_translate = morse.encode(string_input)
-    morse_translate = morse_translate.replace('?', '')
-    morse_translate = morse_translate.replace('      ',' / ')
-    morse_translate = morse_translate.split()
-    beats = []
-    for letter in morse_translate:
-        for part in letter:
-            beats.append(morse_parts.get(part))
-    pattern = {'_taps': beats[1:], 'duration': sum(beats), 'morse':' '.join(morse_translate)}
-    return pattern
-
 @APP.route('/', methods=['GET'])
 def index():
   return render_template('index.html')
 
+
+# route for requesting rhythms, and setting them as 'illuminated' i.e. displayed
 @APP.route('/rhythms', methods=['GET', 'POST'])
 def rhythms():
-    api_key = request.headers.get('X-Api-Key')
-    if api_key != ALLOWED_KEY:
+    api_key = request.headers.get('X-Api-Key') #get API key from http header
+    if api_key != ALLOWED_KEY: #match against stored key
         return jsonify(valid_key=False)
     if request.method == "GET":
-        to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)])
+        to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)]) #get the last non-illuminated rhythm
         if to_illuminate:
             this_id = to_illuminate.get('_id')
-            this_id_str = str(this_id)
+            this_id_str = str(this_id) #stringify the ObjectId for JSON
             to_illuminate.update({'_id':this_id_str})
         else:
             to_illuminate = None
@@ -72,11 +54,7 @@ def rhythms():
         RHYTHMS.update({'_id':this_id}, {'$set':{'illuminated':illuminated_status}})
         return jsonify(illuminated_status=illuminated_status)
 
-
-@SOCKETIO.on('connect')
-def connect():
-    print("Connected")
-
+# route for storing rhythms, takes a Tappy JSON object by default
 @APP.route('/illuminate', methods=['POST'])
 def illuminate(rhythm_json=None):
     rhythm_to_store = rhythm_json or request.get_json()
@@ -84,16 +62,9 @@ def illuminate(rhythm_json=None):
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
 
-@APP.route('/sms', methods=['POST'])
-def sms():
-    if request.method == "POST":
-        resp = MessagingResponse()
-        received = request.values.get('Body', None)
-        if received:
-            morsified = morse_list(received)
-            illuminate(morsified)
-            resp.message("You sent %s" % (morsified.get('morse')))
-        return str(resp)
+@SOCKETIO.on('connect')
+def connect():
+    print("Connected")
 
 if __name__ == '__main__':
     SOCKETIO.run(APP, host="0.0.0.0", debug=True)
