@@ -5,6 +5,7 @@ import serial
 import os
 
 RHYTHM_URL = "https://illumin.im/rhythms"
+#RHYTHM_URL = "http://127.0.0.1:5000/rhythms"
 
 MB = serial.Serial('/dev/tty.usbmodem1412', baudrate=115200)
 

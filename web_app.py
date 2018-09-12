@@ -30,7 +30,7 @@ APP.secret_key = os.environ.get('SECRET_KEY')
 
 SOCKETIO = SocketIO(APP)
 
-DOT_SPEED = 100
+DOT_SPEED = 200
 DASH_SPEED = DOT_SPEED*3
 SPACE_SPEED = DOT_SPEED*7
 
@@ -45,7 +45,7 @@ def morse_list(string_input):
     for letter in morse_translate:
         for part in letter:
             beats.append(morse_parts.get(part))
-    pattern = {'_taps': beats, 'duration': sum(beats), 'morse':' '.join(morse_translate)}
+    pattern = {'_taps': beats[1:], 'duration': sum(beats), 'morse':' '.join(morse_translate)}
     return pattern
 
 @APP.route('/', methods=['GET'])

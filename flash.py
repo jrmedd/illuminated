@@ -5,7 +5,7 @@ import radio
 radio.config(power=7, channel=33)
 radio.on()
 
-FLASH_TIME = 100
+FLASH_TIME = 50
 
 previous_receive = []
 NP = neopixel.NeoPixel(microbit.pin2, 1)  # one neopixel on pin 2
