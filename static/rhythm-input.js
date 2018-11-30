@@ -4,6 +4,19 @@ var socket = io.connect(window.origin);
 var pattern = new tappy.Rhythm();
 var timeout;
 
+socket.on('connect', function(){
+    sessionid = this.id;
+});
+
+socket.on('queueAlert', function(data){
+    if (sessionid == data.session_illuminating) {
+        $("#confirm-illumination h1").fadeOut(function() {
+            $(this).html("Your illumination is appearing");
+            $(this).fadeIn();
+        });
+    }
+});
+
 $('#tap-pad').on('click', function(){
   clearTimeout(timeout);
   pattern.tap();
@@ -45,7 +58,7 @@ $("#illuminate").on('click', function(e){
       type: "POST",
       url: 'illuminate',
       contentType: "application/json; charset=utf-8",
-      data: JSON.stringify({'_taps':pattern._taps,'duration':pattern.duration}),
+      data: JSON.stringify({'_taps':pattern._taps,'duration':pattern.duration,'session':sessionid}),
       success: function() {
       console.log("Illuminated");
     }

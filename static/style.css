@@ -82,6 +82,7 @@ body {
 
 #recording-controls {
   display: flex;
+  flex-wrap: wrap;
   width: 100%;
   justify-content: space-evenly;
   align-items: center;
@@ -97,7 +98,10 @@ body {
   background: #F0777E;
   color: rgba(255,255,255,0.9);
   border: none;
-  }
+  width: 95%;
+  height: 25vh;
+  margin: .25em;
+}
 
 
 

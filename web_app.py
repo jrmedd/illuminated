@@ -4,8 +4,6 @@ from bson import ObjectId
 
 import json
 
-import morse_talk as morse
-
 import datetime
 
 from pymongo import MongoClient
@@ -38,13 +36,14 @@ def index():
 def rhythms():
     api_key = request.headers.get('X-Api-Key') #get API key from http header
     if api_key != ALLOWED_KEY: #match against stored key
-        return jsonify(valid_key=False)
+        return make_response(jsonify(valid_key=False), 401)
     if request.method == "GET":
         to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)]) #get the last non-illuminated rhythm
         if to_illuminate:
             this_id = to_illuminate.get('_id')
             this_id_str = str(this_id) #stringify the ObjectId for JSON
             to_illuminate.update({'_id':this_id_str})
+            SOCKETIO.emit('queueAlert', {'session_illuminating':to_illuminate.get('session')})
         else:
             to_illuminate = None
         return jsonify(to_illuminate=to_illuminate)
