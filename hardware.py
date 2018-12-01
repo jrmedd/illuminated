@@ -7,7 +7,7 @@ import os
 RHYTHM_URL = "https://illumin.im/rhythms"
 #RHYTHM_URL = "http://127.0.0.1:5000/rhythms"
 
-#TEENSY = serial.Serial(port='/dev/tty.usbmodem1411', baudrate=115200)
+TEENSY = serial.Serial(port='/dev/tty.usbmodem1411', baudrate=115200)
 
 API_KEY = os.environ.get('API_KEY')
 
