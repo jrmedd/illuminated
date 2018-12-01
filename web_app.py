@@ -2,6 +2,8 @@ from flask import Flask, flash, url_for, render_template, request, redirect, mak
 from flask_socketio import SocketIO
 from bson import ObjectId
 
+from random import randint
+
 import json
 
 import datetime
@@ -17,6 +19,7 @@ MONGO_URL = os.environ.get('MONGO_URL')
 CLIENT = MongoClient(MONGO_URL)
 DB = CLIENT['illuminated']
 RHYTHMS = DB['rhythms']
+PROMPTS = DB['prompts']
 
 ALLOWED_KEY = os.environ.get('API_KEY')
 
@@ -38,12 +41,14 @@ def rhythms():
     if api_key != ALLOWED_KEY: #match against stored key
         return make_response(jsonify(valid_key=False), 401)
     if request.method == "GET":
-        to_illuminate = RHYTHMS.find_one({'illuminated':False},sort=[("timestamp", 1)]) #get the last non-illuminated rhythm
-        if to_illuminate:
+        to_illuminate_list = list(RHYTHMS.find({'illuminated':False},sort=[("timestamp", 1)])) 
+        if to_illuminate_list:
+            to_illuminate = to_illuminate_list[0]# get the last non-illuminated rhythm
             this_id = to_illuminate.get('_id')
             this_id_str = str(this_id) #stringify the ObjectId for JSON
             to_illuminate.update({'_id':this_id_str})
-            SOCKETIO.emit('queueAlert', {'session_illuminating':to_illuminate.get('session')})
+            session_queue = [queued.get('session') for queued in to_illuminate_list]
+            SOCKETIO.emit('queueAlert', {'session_illuminating':to_illuminate.get('session'), 'session_queue':session_queue})
         else:
             to_illuminate = None
         return jsonify(to_illuminate=to_illuminate)
@@ -61,6 +66,12 @@ def illuminate(rhythm_json=None):
     RHYTHMS.insert(rhythm_to_store)
     return jsonify(stored=True)
 
+@APP.route('/prompt', methods=['GET'])
+def prompt():
+    all_prompts = list(PROMPTS.find({}, {'_id':0}))
+    random_prompt = all_prompts[randint(0, (len(all_prompts)-1))].get('prompt')
+    return jsonify(loaded_prompt=random_prompt)
+    
 @SOCKETIO.on('connect')
 def connect():
     print("Connected")

@@ -11,11 +11,29 @@ socket.on('connect', function(){
 socket.on('queueAlert', function(data){
     if (sessionid == data.session_illuminating) {
         $("#confirm-illumination h1").fadeOut(function() {
-            $(this).html("Your illumination is appearing");
+            $(this).html("Your rhythm is appearing. You can close this window.");
+            $(this).fadeIn();
+        });
+    }
+    var positionInQueue = data.session_queue.indexOf(sessionid);
+    var lengthOfQueue = data.session_queue.length;
+    if (positionInQueue > 0) {
+        $("#confirm-illumination h1").fadeOut(function () {
+            if (positionInQueue > 1) {
+                $(this).html("Your rhythm is in the queue. There are " + (positionInQueue) + " rhythms in front of yours.");
+            }
+            else {
+                $(this).html("Your rhythm is in the queue. There is " + (positionInQueue) + " rhythm in front of yours.");
+            }
             $(this).fadeIn();
         });
     }
 });
+
+$.getJSON('/prompt', function(data){
+    $("#welcome h4").html(data.loaded_prompt);
+})
+
 
 $('#tap-pad').on('click', function(){
   clearTimeout(timeout);
