@@ -22,7 +22,7 @@
 
 // define the total number of LEDs, and the number of individual strips/lanterns
 #define NUM_LEDS 30
-#define BUOYS 5
+#define BUOYS 1
 #define MAX_VALUES 14 // DOESN'T SEEM TO LIKE ANY MORE THAN 14. For this to work, hardware.py needs to limit the number of beats sent to [0:13]
 
 // define data and clock pins for the DotStars
@@ -31,10 +31,10 @@
 
 int startingColour1 = 128; // aqua
 int startingColour2 = 192; // purple
-int speedAdjust = 2; // higher number for more pixels, i.e 10 if using 30 pixels
-int fadeAmount = 80; // lower number for more pixels, i.e. 20 if using 30 pixels
-int flashTime = 20; // lower number for more pixels, i.e. 10 if using 30 pixels
-int pauseBetweenBuoys = 200;
+int speedAdjust = 10; // higher number for more pixels, i.e 10 if using 30 pixels
+int fadeAmount = 20; // lower number for more pixels, i.e. 20 if using 30 pixels
+int flashTime = 11; // lower number for more pixels, i.e. 10 if using 30 pixels
+int pauseBetweenBuoys = 400;
 
 
 // calculate the number of LEDs on each buoy
@@ -178,12 +178,12 @@ void doubleFadeTail() {
           fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
           leds[i] = CHSV(hue2 + i, 255, 255); // turn on the next leading LED
           FastLED.show();
-          FastLED.delay(20);
+          FastLED.delay(flashTime);
           fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
         }
         delay(intervals2[j] / speedAdjust); // delay, using the latest rhythm value
         if (j > numberOfBeats2) { // add the final flash
-          FastLED.delay(20);
+          FastLED.delay(flashTime);
         }
       }
       delay(pauseBetweenBuoys); // pause before moving on to the next strip
