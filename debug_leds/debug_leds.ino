@@ -208,4 +208,3 @@ void doubleFadeTail() {
     }
   }
 }
-

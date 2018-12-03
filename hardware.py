@@ -1,6 +1,9 @@
 import requests
 import time
 import serial
+import logging
+
+logging.basicConfig(filename='errors.log',level=logging.DEBUG)
 
 import os
 
@@ -19,9 +22,10 @@ while True:
     except:
         print("Unable to access")
     if oldest_rhythm:
-        beats = oldest_rhythm.get('_taps')[0:19] #always strip it to 20 beats
+        beats = oldest_rhythm.get('_taps')[0:15] #always strip it to 15 beats
         #comma-separate the beats as ints in a string, the 'BEATS' bit gets chopped off when first reading on the Arduino
         beats_string = "BEATS,%s\n" % (','.join([str(int(beat)) for beat in beats])) 
+        print(beats_string)
         TEENSY.write(beats_string.encode())
         update = requests.post(RHYTHM_URL, headers=API_HEADER ,data={'_id':oldest_rhythm.get('_id'), 'illuminated':True})
         time.sleep((oldest_rhythm.get('duration')/1000)*9)

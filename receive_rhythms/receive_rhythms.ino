@@ -20,6 +20,7 @@ void loop() {
     /*ITERATE OVER COMMA SEPARATED VALUES BEFORE THE NEWLINE (FIRST VALUE 'BEATS' GETS DROPPED ALTOGETHER BY SERIAL READ)*/
     while (Serial.read() != '\n') {
          intervals[index] = Serial.parseInt();//read in a beat interval
+         Serial.println(intervals[index]);
          index +=1 ;
     }
     /*DETERMINE THE NUMBER OF BEATS BELOW*/

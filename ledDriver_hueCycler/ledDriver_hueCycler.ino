@@ -1,20 +1,20 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //
 // -- ILLUMINIM LED DRIVER
+// ---- type II - hue cycler
 //
 // ---- Authors: Callum Kirkwood, James Medd
 //
 // ---- takes rhythm data from https://illumin.im (via hardware.py), which is used to drive 9 DotStar strips wired in series
-// ---- for each rhythm received, a dot wipes across each strip from left to right, leaving a fading tail. The rhythm plays once per strip and moves down the series.
-// ---- two rhythms can play at the same time, denoted by different colour gradients
-// ---- the latest rhythm will loop forever - if a new one is received, the previous rhythm stops when it reaches the last strip
+// ---- the colour of each strip changes in time with the rhythm, which plays once on each strip before moving down the series
+// ---- two rhythms can play at the same time. The latest rhythm will loop forever - if a new one is received, the previous rhythm stops when it reaches the last strip
 //
-// ---- USE LINES 23-37 TO CUSTOMISE SETTINGS
-// ------ startingColour1 and startingColour2 take a hue value, as the starting point for a gradient across all strips
-// ------ speedAdjust is used to calibrate the incoming rhythm data for the amount of pixels on each strip. 10 is a good number for 30 pixels (go higher if using more)
-// ------ fadeAmount sets the size of the fading tail - 20 is a good number if using 30 pixels (go lower if using more)
-// ------ flashTime sets the time it takes for the dot to travel from left to right on each beat - 10 is a good number if using 30 pixels (go lower if using more pixels)
+// ---- USE LINES 20-30 TO CUSTOMISE SETTINGS
+// ------ flashTime sets the generic time delay of each beat/tap 
 // ------ pauseBetweenBuoys sets the delay before moving on to the next strip
+//
+// ---- OPTIONAL EXTRA - leave each lantern turned on as the rhythm moves on down the series
+// ------ comment out lines 149 and 185 to leave all lanterns turned on
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,13 +29,10 @@
 #define DATA_PIN 9
 #define CLOCK_PIN 10
 
-int startingColour1 = 128; // aqua
-int startingColour2 = 192; // purple
-int speedAdjust = 2; // higher number for more pixels, i.e 10 if using 30 pixels
-int fadeAmount = 80; // lower number for more pixels, i.e. 20 if using 30 pixels
-int flashTime = 20; // lower number for more pixels, i.e. 10 if using 30 pixels
-int pauseBetweenBuoys = 400;
+int flashTime = 20; // represents the tap (i.e. the time the finger is pressed down)
+int pauseBetweenBuoys = 700;
 
+uint8_t hue = 0;
 
 // calculate the number of LEDs on each buoy
 int PER_BUOY = NUM_LEDS / BUOYS;
@@ -125,34 +122,34 @@ void loop() {
     }
   }
 
-  doubleFadeTail(); // trigger main function
+  doubleHueCycle(); // trigger main function
 
 }
 
 
 
-void doubleFadeTail() {
+void doubleHueCycle() {
   // set starting colours
-  int hue1 = startingColour1;
-  int hue2 = startingColour2;
+  //int hue1 = startingColour1;
+  //int hue2 = startingColour2;
 
   if (intervals[0] != 0) { // if a rhythm is received...
-    for (int j = 0; j < numberOfBeats + 1; j++) { // for each available tap...
-      for (int i = first; i < last + 1; i++) { // for each LED on the buoy...
-        fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
-        leds[i] = CHSV(hue1 + i, 255, 255); // turn on the next leading LED
-        FastLED.show();
-        FastLED.delay(flashTime); //
-        fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
-      }
-      delay(intervals[j] / speedAdjust); // delay, using the latest rhythm value
+    for (int j = 0; j < numberOfBeats + 2; j++) { // for each available tap...
+      int beat = intervals[j];
+      leds(first, last) =  CHSV(hue, 255, 255); // set the buoy's colour
+      FastLED.show();
+      FastLED.delay(flashTime);
+      hue += 80; // update the hue variable ready for the next colour change
+      delay(beat); // delay, using the latest rhythm value
       if (j > numberOfBeats) { // add a final flash
         FastLED.delay(flashTime);
       }
     }
-    delay(pauseBetweenBuoys); // pause before moving on to the next strip
+    delay(pauseBetweenBuoys); // wait before moving on
+    leds(first, last) = CRGB::Black; // comment out this line to leave each buoy turned on as the rhythm moves down
+    FastLED.show();
 
-    // jump to the next strip
+    // jump to the next buoy
     first += PER_BUOY;
     last += PER_BUOY;
   }
@@ -172,21 +169,21 @@ void doubleFadeTail() {
 
   // if a second rhythm is available, repeat as above - in a second colour
   if (intervals2[0] != 0) {
-    if (first > (stream2_first + (PER_BUOY * 2)) || first < (stream2_first - (PER_BUOY)) || !leds[stream2_first]) { // if the previous rhythm is at least 2 strips away...
-      for (int j = 0; j < numberOfBeats2 + 1; j++) { // for each available tap...
-        for (int i = stream2_first; i < stream2_last + 1; i++) { // for each LED on the buoy...
-          fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
-          leds[i] = CHSV(hue2 + i, 255, 255); // turn on the next leading LED
-          FastLED.show();
-          FastLED.delay(flashTime);
-          fadeToBlackBy(leds, NUM_LEDS, fadeAmount); // fade all LEDS
-        }
-        delay(intervals2[j] / speedAdjust); // delay, using the latest rhythm value
-        if (j > numberOfBeats2) { // add the final flash
+    if (first > (stream2_first + (PER_BUOY * 2)) || first < (stream2_first - PER_BUOY) || intervals[0] == 0) { // if the previous rhythm is at least 2 strips away...
+      for (int j = 0; j < numberOfBeats2 + 2; j++) { // start flashing a new rhythm
+        int beat = intervals2[j];
+        leds(stream2_first, stream2_last) =  CHSV(hue * 2, 255, 255); // make sure the starting hue is different to the first rhythm
+        FastLED.show();
+        FastLED.delay(flashTime); 
+        hue += 80; // update the hue variable ready for the next colour change
+        delay(beat); // delay, using the latest rhythm value
+        if (j > numberOfBeats2) { // add a final flash
           FastLED.delay(flashTime);
         }
       }
-      delay(pauseBetweenBuoys); // pause before moving on to the next strip
+      delay(pauseBetweenBuoys); // wait before moving on
+      leds(stream2_first, stream2_last) = CRGB::Black; // comment out this line to leave each buoy turned on as the rhythm moves down
+      FastLED.show();
 
       // jump to the next buoy
       stream2_first += PER_BUOY;
