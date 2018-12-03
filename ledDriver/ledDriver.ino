@@ -50,8 +50,8 @@ int numberOfBeats; // this will be used to determine how many beats we read into
 int numberOfBeats2;
 
 bool firstIsFull = false; // initialise a boolean that'll be used to check whether we already have a rhythm playing
-int index;
-int index2;
+int iterIndex;
+int iterIndex2;
 
 // set up the first buoy coordinates for the first stream
 int first = 0;
@@ -81,20 +81,20 @@ void loop() {
     }
 
     numberOfBeats = 0;// reset the beat count
-    index = 0; // reset the assembly index
+    iterIndex = 0; // reset the assembly iterIndex
     if (firstIsFull) {
       numberOfBeats2 = 0;
-      index2 = 0;
+      iterIndex2 = 0;
     }
 
     /*ITERATE OVER COMMA SEPARATED VALUES BEFORE THE NEWLINE (FIRST VALUE 'BEATS' GETS DROPPED ALTOGETHER BY SERIAL READ)*/
     while (Serial.read() != '\n') {
       if (!firstIsFull) { // if the first array is empty...
-        intervals[index] = Serial.parseInt();//read in a beat interval
-        index += 1 ;
+        intervals[iterIndex] = Serial.parseInt();//read in a beat interval
+        iterIndex += 1 ;
       } else { // else if the first array is full...
-        intervals2[index2] = Serial.parseInt();//read in a beat interval
-        index2 += 1 ;
+        intervals2[iterIndex2] = Serial.parseInt();//read in a beat interval
+        iterIndex2 += 1 ;
       }
     }
 
