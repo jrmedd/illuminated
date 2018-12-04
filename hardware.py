@@ -30,4 +30,7 @@ while True:
         update = requests.post(RHYTHM_URL, headers=API_HEADER ,data={'_id':oldest_rhythm.get('_id'), 'illuminated':True})
         time.sleep((oldest_rhythm.get('duration')/1000)*9)
     else:
-        time.sleep(5)
+        beats_string = "BEATS,200,200,200,200\n"
+        print(beats_string)
+        TEENSY.write(beats_string.encode())
+        time.sleep(7.2)
