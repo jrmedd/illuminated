@@ -21,13 +21,13 @@
 #include <FastLED.h>
 
 // define the total number of LEDs, and the number of individual strips/lanterns
-#define NUM_LEDS 30
-#define BUOYS 5
+#define NUM_LEDS 184
+#define BUOYS 4
 #define MAX_VALUES 14 // DOESN'T SEEM TO LIKE ANY MORE THAN 14. For this to work, hardware.py needs to limit the number of beats sent to [0:13]
 
 // define data and clock pins for the DotStars
-#define DATA_PIN 9
-#define CLOCK_PIN 10
+#define DATA_PIN 11
+#define CLOCK_PIN 13
 
 int flashTime = 20; // represents the tap (i.e. the time the finger is pressed down)
 int pauseBetweenBuoys = 700;
@@ -60,9 +60,10 @@ int stream2_last = first + (PER_BUOY - 1);
 
 void setup() {
   Serial.begin(115200);
-
   FastLED.addLeds<DOTSTAR, DATA_PIN, CLOCK_PIN, BGR, DATA_RATE_KHZ(8)>(leds, NUM_LEDS); // initialise DotStars
   FastLED.setBrightness(255); // set max brightness
+  FastLED.clear();
+  FastLED.show();
 }
 
 void loop() {
@@ -205,4 +206,3 @@ void doubleHueCycle() {
     }
   }
 }
-

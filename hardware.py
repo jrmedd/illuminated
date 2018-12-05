@@ -22,7 +22,7 @@ while True:
     except:
         print("Unable to access")
     if oldest_rhythm:
-        beats = oldest_rhythm.get('_taps')[0:15] #always strip it to 15 beats
+        beats = oldest_rhythm.get('_taps')[0:13] #always strip it to 15 beats
         #comma-separate the beats as ints in a string, the 'BEATS' bit gets chopped off when first reading on the Arduino
         beats_string = "BEATS,%s\n" % (','.join([str(int(beat)) for beat in beats])) 
         print(beats_string)
@@ -33,4 +33,4 @@ while True:
         beats_string = "BEATS,200,200,200,200\n"
         print(beats_string)
         TEENSY.write(beats_string.encode())
-        time.sleep(7.2)
+        time.sleep(3.2)

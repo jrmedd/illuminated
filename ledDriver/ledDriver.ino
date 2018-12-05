@@ -21,13 +21,13 @@
 #include <FastLED.h>
 
 // define the total number of LEDs, and the number of individual strips/lanterns
-#define NUM_LEDS 30
-#define BUOYS 5
+#define NUM_LEDS 276
+#define BUOYS 6
 #define MAX_VALUES 14 // DOESN'T SEEM TO LIKE ANY MORE THAN 14. For this to work, hardware.py needs to limit the number of beats sent to [0:13]
 
 // define data and clock pins for the DotStars
-#define DATA_PIN 9
-#define CLOCK_PIN 10
+#define DATA_PIN 11
+#define CLOCK_PIN 13
 
 int startingColour1 = 128; // aqua
 int startingColour2 = 192; // purple
