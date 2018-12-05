@@ -9,7 +9,7 @@
 // ---- the colour of each strip changes in time with the rhythm, which plays once on each strip before moving down the series
 // ---- two rhythms can play at the same time. The latest rhythm will loop forever - if a new one is received, the previous rhythm stops when it reaches the last strip
 //
-// ---- USE LINES 20-30 TO CUSTOMISE SETTINGS
+// ---- USE LINES 30-41 TO CUSTOMISE SETTINGS
 // ------ flashTime sets the generic time delay of each beat/tap 
 // ------ pauseBetweenBuoys sets the delay before moving on to the next strip
 //
