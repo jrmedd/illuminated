@@ -13,12 +13,19 @@
 // ------ flashTime sets the generic time delay of each beat/tap 
 // ------ pauseBetweenBuoys sets the delay before moving on to the next strip
 //
+// ---- REMOTE RESET
+// ------ Assumes the existence of an API endpoint that will trigger the Raspberry Pi to send a string command over serial
+// ------ Change the value of resetCommand (line 40) to set the command phrase - it's currently looking out for the word "reset"
+// ------ When the serial input matches the phrase stored in resetCommand, the reset function is triggered (lines 98-100)
+//
 // ---- OPTIONAL EXTRA - leave each lantern turned on as the rhythm moves on down the series
 // ------ comment out lines 149 and 185 to leave all lanterns turned on
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #include <FastLED.h>
+
+void(* resetFunc) (void) = 0; // set up reset function
 
 // define the total number of LEDs, and the number of individual strips/lanterns
 #define NUM_LEDS 184
@@ -31,6 +38,7 @@
 
 int flashTime = 20; // represents the tap (i.e. the time the finger is pressed down)
 int pauseBetweenBuoys = 700;
+char resetCommand = "reset" // the phrase sent by the Raspberry Pi when a reset is required
 
 uint8_t hue = 0;
 
@@ -87,6 +95,9 @@ void loop() {
 
     /*ITERATE OVER COMMA SEPARATED VALUES BEFORE THE NEWLINE (FIRST VALUE 'BEATS' GETS DROPPED ALTOGETHER BY SERIAL READ)*/
     while (Serial.read() != '\n') {
+        if (Serial.read == resetCommand) { // reset the Teensy if requested by the Pi
+          resetFunc();
+        }
       if (!firstIsFull) { // if the first array is empty...
         intervals[iterIndex] = Serial.parseInt();//read in a beat interval
         iterIndex += 1 ;
