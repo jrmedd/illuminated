@@ -15,7 +15,7 @@
 //
 // ---- REMOTE RESET
 // ------ Assumes the existence of an API endpoint that will trigger the Raspberry Pi to send a string command over serial
-// ------ Change the value of resetCommand (line 40) to set the command phrase - it's currently looking out for the word "reset"
+// ------ Change the value of resetCommand (line 41) to set the command phrase - it's currently looking out for the word "reset"
 // ------ When the serial input matches the phrase stored in resetCommand, the reset function is triggered (lines 98-100)
 //
 // ---- OPTIONAL EXTRA - leave each lantern turned on as the rhythm moves on down the series
