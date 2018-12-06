@@ -13,6 +13,7 @@ socket.on('queueAlert', function(data){
         $("#confirm-illumination h1").fadeOut(function() {
             $(this).html("Your rhythm is appearing. You can close this window.");
             $(this).fadeIn();
+            setTimeout(function(){location.reload()}, 3000);
         });
     }
     var positionInQueue = data.session_queue.indexOf(sessionid);
