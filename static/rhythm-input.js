@@ -36,7 +36,9 @@ $.getJSON('/prompt', function(data){
 })
 
 
-$('#tap-pad').on('click', function(){
+$('#tap-pad').on('touchstart mouseup', function(e){
+    e.stopPropagation();
+    e.preventDefault();
   clearTimeout(timeout);
   pattern.tap();
   console.log(pattern.length);
