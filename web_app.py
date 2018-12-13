@@ -71,6 +71,11 @@ def prompt():
     all_prompts = list(PROMPTS.find({}, {'_id':0}))
     random_prompt = all_prompts[randint(0, (len(all_prompts)-1))].get('prompt')
     return jsonify(loaded_prompt=random_prompt)
+
+@APP.route('/gallery', methods=['GET'])
+def gallery():
+    all_rhythms = [rhythm.get('_taps') for rhythm in list(RHYTHMS.find({},{'_taps':1, '_id':0}))]
+    return render_template('gallery.html', loaded_rhythms=all_rhythms)
     
 @SOCKETIO.on('connect')
 def connect():

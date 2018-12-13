@@ -147,3 +147,10 @@ body {
   text-align: center;
   flex-wrap: wrap;
 }
+
+#gallery-grid {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}

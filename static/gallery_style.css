@@ -1,0 +1,12 @@
+body {
+    background: rgb(102,177,156);
+    margin: 0;
+}
+
+#gallery-grid {
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
