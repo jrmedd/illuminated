@@ -36,14 +36,15 @@ var bgColour = "102,177,156";
 var primColour = "255,255,255";
 function setup() {
     noStroke();
-    var canvas = createCanvas(800, 800);
+    var canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('gallery-grid');
     background(...bgColour.split(","));
-    squaresPer = 32;
-    squareDims = width / squaresPer;
+   // squaresPer = 32;
+    squareDims = Math.floor(sqrt(allRhythms.length));
+    roundWindowWidth = (Math.ceil(windowWidth / squareDims) * squareDims);
     for (var i = 0; i < (allRhythms.length); i++) {
-        var x = (i * squareDims) % width;
-        var y = Math.floor((i * squareDims) / height) * squareDims;
+        var x = (i * squareDims) % (roundWindowWidth);
+        var y = Math.floor((i * squareDims) / roundWindowWidth) * squareDims;
         squares[i] = new BlinkingSquare(x, y, squareDims, squareDims, allRhythms[i], primColour, bgColour);
     }
     /*
@@ -53,7 +54,6 @@ function setup() {
         squares[i] = new BlinkingSquare(x, y, squareDims, squareDims, [parseInt(Math.random() * 2000), parseInt(Math.random() * 1000), parseInt(Math.random() * 5000), parseInt(Math.random() * 000)], "255,255,255", "102,177,156	");
     }
     */
-    console.log(squares.length);
 }
 
 function draw() {

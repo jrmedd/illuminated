@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Illuminim - Gallery</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='gallery_style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='gallery_style.css') }}?1">
 </head>
 <body>
     <div id="gallery-grid"></div>
@@ -13,7 +13,8 @@
     <script src="{{ url_for('static', filename='p5.dom.min.js') }}"></script>
     <script>
         var allRhythms = {{ loaded_rhythms }};
+        allRhythms.reverse();
     </script>
-    <script src="{{ url_for('static', filename='animation.js') }}"></script>
+    <script src="{{ url_for('static', filename='animation.js') }}?1"></script>
 </body>
 </html>

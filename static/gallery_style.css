@@ -1,6 +1,7 @@
 body {
     background: rgb(102,177,156);
     margin: 0;
+    overflow: hidden;
 }
 
 #gallery-grid {
