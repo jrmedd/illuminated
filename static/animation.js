@@ -39,7 +39,6 @@ function setup() {
     var canvas = createCanvas(windowWidth, windowHeight);
     canvas.parent('gallery-grid');
     background(...bgColour.split(","));
-   // squaresPer = 32;
     squareDims = Math.floor(sqrt(allRhythms.length));
     roundWindowWidth = (Math.ceil(windowWidth / squareDims) * squareDims);
     for (var i = 0; i < (allRhythms.length); i++) {
@@ -47,13 +46,6 @@ function setup() {
         var y = Math.floor((i * squareDims) / roundWindowWidth) * squareDims;
         squares[i] = new BlinkingSquare(x, y, squareDims, squareDims, allRhythms[i], primColour, bgColour);
     }
-    /*
-    for (var i = 0; i < (squaresPer * squaresPer); i++) {
-        var x = (i * squareDims) % width;
-        var y = Math.floor((i * squareDims) / height) * squareDims;
-        squares[i] = new BlinkingSquare(x, y, squareDims, squareDims, [parseInt(Math.random() * 2000), parseInt(Math.random() * 1000), parseInt(Math.random() * 5000), parseInt(Math.random() * 000)], "255,255,255", "102,177,156	");
-    }
-    */
 }
 
 function draw() {
